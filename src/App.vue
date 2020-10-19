@@ -1,15 +1,14 @@
 <template>
   <v-app>
     <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
       <p>Prueba de concepto</p>
-      </div>
-
       <v-spacer></v-spacer>
-
+      <router-link class="anchor" to="/pixi">PIXI</router-link>
+      <v-spacer></v-spacer>
+      <router-link class="anchor" to="/canvas">CANVAS</router-link>
     </v-app-bar>
-
     <v-main>
+    <router-view></router-view>
     </v-main>
   </v-app>
 </template>

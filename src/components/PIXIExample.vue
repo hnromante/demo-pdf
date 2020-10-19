@@ -42,6 +42,16 @@
 
               </td>
               </tr>
+              <tr>
+                <td colspan="3">
+                  <v-text-field label="Canvas width" v-model="canvasW"></v-text-field>
+                  <v-text-field label="Canvas heigth" v-model="canvasH"></v-text-field>
+                </td>
+                <td>
+                  <v-text-field label="Step" v-model="step"></v-text-field>
+                  <v-switch v-model="grid" label="Grid ON/OFF"></v-switch>
+                </td>
+              </tr>
 
             </tbody>
           </v-simple-table>
@@ -62,6 +72,7 @@ import * as PIXI from "pixi.js/dist/pixi";
         canvasW: 800,
         canvasH: 1200,
         step: 100,
+        grid: true,
         canvas: null,
         pixiApp: null,
         graphics: [],

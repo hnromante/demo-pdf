@@ -1,13 +1,75 @@
 <template>
     <v-row>
         <v-col>
-            <v-btn class="primary" @click="drawRectangle(0, 0, 180, 30)">Agregar Titulo (180x30)</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn class="secondary" @click="drawRectangle(0, 0, 40, 10)">Agregar Subtitulo (40x10)</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn class="green" @click="drawSprite">Agregar Imagen (200x200)</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn class="blue" @click="drawRectangle(0, 0, 400, 600)">Agregar Imagen grande(400x600)</v-btn>
+          <v-simple-table>
+            <thead>
+              <tr>
+                <th>Objeto</th>
+                <th>Tamaño</th>
+                <th>Posición</th>
+                <th>Agregar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  Titulo
+                </td>
+                <td>
+                  x,y
+                </td>
+                <td>
+                  w,h
+                </td>
+                <td>
+                  <v-btn class="primary" @click="drawRectangle(0, 0, 180, 30)">Agregar</v-btn>
+                </td>
+              </tr>
+              <tr>
+              <td>
+                Subtitulo
+              </td>
+              <td>
+                x,y
+              </td>
+              <td>
+                w,h
+              </td>
+              <td>
+                <v-btn class="primary" @click="drawRectangle(10, 20, 50, 30)">Agregar  </v-btn>
+              </td>
+              </tr>
+              <tr>
+              <td>
+                Imagen
+              </td>
+              <td>
+                x,y
+              </td>
+              <td>
+                w,h
+              </td>
+              <td>
+                <v-btn class="green" @click="drawSprite({posX: 0, posY: 0, w: 200, h: 200})">Agregar</v-btn>
+
+              </td>
+              </tr>
+              <tr>
+              <td>
+                Imagen grande
+              </td>
+              <td>
+                x,y
+              </td>
+              <td>
+                w,h
+              </td>
+              <td>
+                <v-btn class="blue" @click="drawRectangle(0, 0, 400, 600)">Agregar  </v-btn>
+              </td>
+              </tr>
+            </tbody>
+          </v-simple-table>
         </v-col>
         <v-col>
             <v-container class="grid-container">
@@ -24,7 +86,7 @@ import * as PIXI from "pixi.js/dist/pixi";
       return {
         canvasW: 800,
         canvasH: 1200,
-        step: 10,
+        step: 100,
         canvas: null,
         pixiApp: null,
         graphics: []
@@ -37,16 +99,12 @@ import * as PIXI from "pixi.js/dist/pixi";
       setupPixi() {
         const Application = PIXI.Application,
           loader = PIXI.loader;
-        this.canvas =  this.$refs.grid;;
+        this.canvas =  this.$refs.grid;
         this.pixiApp =  new Application({
           width: this.canvasW,
           height: this.canvasH,
           view: this.canvas,
-          // create transparent canvas
           transparent: true,
-
-          // change background color to blue
-          backgroundColor: '0x86D0F2'
         })
         this.setCanvasSize(this.canvas, this.canvasW, this.canvasH);
         this.drawGrid( this.canvasW, this.canvasH, this.step)
@@ -80,24 +138,14 @@ import * as PIXI from "pixi.js/dist/pixi";
         this.graphics.push(graphics)
         this.pixiApp.stage.addChild(graphics)
       },
-      drawSprite() {
-/*        const cat = PIXI.Sprite.from('../assets/logo.png')
-        //Add the cat to the stage
-        this.pixiApp.stage.addChild(cat);*/
-
-// create a PIXI sprite from an image path
-        const hawaii = PIXI.Sprite.from('https://lh3.googleusercontent.com/proxy/XiV7ivyfCm6dL7pDE_pS9ZOctLDcbY2c8seMqtcJ0M1NMmJ7bVKOfTcmafl9-ov2YJPofBbPlAg7M-BXGpTcMfgyuCZMpCcctnhrMN37QAL0YRk-rEk');
-
-// center the sprite anchor point
-        hawaii.anchor.x = 0;
-        hawaii.anchor.y = 0;
-
-// move the sprite to the center of the canvas
-        hawaii.position.x = 200;
-        hawaii.position.y = 200;
-        hawaii.width = 200;
-        hawaii.height = 200;
-
+      drawSprite({posX ,posY, w, h, url='https://lh3.googleusercontent.com/proxy/XiV7ivyfCm6dL7pDE_pS9ZOctLDcbY2c8seMqtcJ0M1NMmJ7bVKOfTcmafl9-ov2YJPofBbPlAg7M-BXGpTcMfgyuCZMpCcctnhrMN37QAL0YRk-rEk'}) {
+        const hawaii = PIXI.Sprite.from(url);
+        hawaii.anchor.x = 0.0;
+        hawaii.anchor.y = 0.0;
+        hawaii.position.x = posX;
+        hawaii.position.y = posY;
+        hawaii.width = w;
+        hawaii.height = h;
         this.pixiApp.stage.addChild(hawaii);
       }
     },

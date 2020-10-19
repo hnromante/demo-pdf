@@ -42,9 +42,12 @@ import * as PIXI from "pixi.js/dist/pixi";
           width: this.canvasW,
           height: this.canvasH,
           view: this.canvas,
-          backgroundColor: '0x1099bb'
+          // create transparent canvas
+          transparent: true,
+
+          // change background color to blue
+          backgroundColor: '0x86D0F2'
         })
-        loader.add('../assets/logo.png')
         this.setCanvasSize(this.canvas, this.canvasW, this.canvasH);
         this.drawGrid( this.canvasW, this.canvasH, this.step)
       },
@@ -78,9 +81,24 @@ import * as PIXI from "pixi.js/dist/pixi";
         this.pixiApp.stage.addChild(graphics)
       },
       drawSprite() {
-        const cat = new PIXI.Sprite(PIXI.Loader.shared["images/cat.png"].texture);
+/*        const cat = PIXI.Sprite.from('../assets/logo.png')
         //Add the cat to the stage
-        this.pixiApp.stage.addChild(cat);
+        this.pixiApp.stage.addChild(cat);*/
+
+// create a PIXI sprite from an image path
+        const hawaii = PIXI.Sprite.from('https://lh3.googleusercontent.com/proxy/XiV7ivyfCm6dL7pDE_pS9ZOctLDcbY2c8seMqtcJ0M1NMmJ7bVKOfTcmafl9-ov2YJPofBbPlAg7M-BXGpTcMfgyuCZMpCcctnhrMN37QAL0YRk-rEk');
+
+// center the sprite anchor point
+        hawaii.anchor.x = 0;
+        hawaii.anchor.y = 0;
+
+// move the sprite to the center of the canvas
+        hawaii.position.x = 200;
+        hawaii.position.y = 200;
+        hawaii.width = 200;
+        hawaii.height = 200;
+
+        this.pixiApp.stage.addChild(hawaii);
       }
     },
 

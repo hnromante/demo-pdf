@@ -5,69 +5,44 @@
             <thead>
               <tr>
                 <th>Objeto</th>
-                <th>Tamaño</th>
                 <th>Posición</th>
+                <th>Tamaño</th>
                 <th>Agregar</th>
               </tr>
             </thead>
             <tbody>
               <tr>
+                <td>Titulo</td>
                 <td>
-                  Titulo
+                  <v-text-field v-model="dimentions.title.posX" label="x"></v-text-field>
+                  <v-text-field v-model="dimentions.title.posY" label="y"></v-text-field>
                 </td>
                 <td>
-                  x,y
+                  <v-text-field v-model="dimentions.title.w" label="w"></v-text-field>
+                  <v-text-field v-model="dimentions.title.h" label="h"></v-text-field>
                 </td>
                 <td>
-                  w,h
+                  <v-btn class="primary" @click="drawRectangle(dimentions.title.posX, dimentions.title.posY, dimentions.title.w, dimentions.title.h)">Agregar</v-btn>
                 </td>
-                <td>
-                  <v-btn class="primary" @click="drawRectangle(0, 0, 180, 30)">Agregar</v-btn>
-                </td>
-              </tr>
-              <tr>
-              <td>
-                Subtitulo
-              </td>
-              <td>
-                x,y
-              </td>
-              <td>
-                w,h
-              </td>
-              <td>
-                <v-btn class="primary" @click="drawRectangle(10, 20, 50, 30)">Agregar  </v-btn>
-              </td>
               </tr>
               <tr>
               <td>
                 Imagen
               </td>
+                <td>
+                  <v-text-field v-model="dimentions.image.posX" label="x"></v-text-field>
+                  <v-text-field v-model="dimentions.image.posY" label="y"></v-text-field>
+                </td>
+                <td>
+                  <v-text-field v-model="dimentions.image.w" label="w"></v-text-field>
+                  <v-text-field v-model="dimentions.image.h" label="h"></v-text-field>
+                </td>
               <td>
-                x,y
-              </td>
-              <td>
-                w,h
-              </td>
-              <td>
-                <v-btn class="green" @click="drawSprite({posX: 0, posY: 0, w: 200, h: 200})">Agregar</v-btn>
+                <v-btn class="green" @click="drawSprite({posX: dimentions.image.posX, posY: dimentions.image.posY, w: dimentions.image.w, h: dimentions.image.h})">Agregar</v-btn>
 
               </td>
               </tr>
-              <tr>
-              <td>
-                Imagen grande
-              </td>
-              <td>
-                x,y
-              </td>
-              <td>
-                w,h
-              </td>
-              <td>
-                <v-btn class="blue" @click="drawRectangle(0, 0, 400, 600)">Agregar  </v-btn>
-              </td>
-              </tr>
+
             </tbody>
           </v-simple-table>
         </v-col>
@@ -89,7 +64,11 @@ import * as PIXI from "pixi.js/dist/pixi";
         step: 100,
         canvas: null,
         pixiApp: null,
-        graphics: []
+        graphics: [],
+        dimentions: {
+          title: {posX: 400, posY: 600, w: 120, h: 40},
+          image: {posX: 400, posY: 400, w: 100, h: 200},
+        }
       }
     },
     mounted() {

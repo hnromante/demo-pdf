@@ -93,11 +93,12 @@ import image from '../assets/logo.png'
         grid: true,
         canvas: null,
         pixiApp: null,
-        graphics: [],
+        graphics: new Map(),
+        sprites: new Map(),
         dimentions: {
           title: {posX: 400, posY: 600, w: 120, h: 40},
           image: {posX: 400, posY: 400, w: 100, h: 200},
-        }
+        },
       }
     },
     mounted() {
@@ -145,25 +146,35 @@ import image from '../assets/logo.png'
           graphics.moveTo(0, y);
           graphics.lineTo(this.canvasH, y);
         }
+        this.graphics.set('grid', graphics)
         this.pixiApp.stage.addChild(graphics)
       },
       drawSprite({posX ,posY, w, h, path='../assets/logo.png'}) {
-        const hawaii = PIXI.Sprite.from(image);
+        const sprite = PIXI.Sprite.from(image);
         posY = Number(posY)
         posX = Number(posX)
         w = Number(w)
         h = Number(h)
-        hawaii.anchor.x = 0.0;
-        hawaii.anchor.y = 0.0;
-        hawaii.position.x = posX;
-        hawaii.position.y = posY;
-        hawaii.width = w;
-        hawaii.height = h;
-        this.pixiApp.stage.addChild(hawaii);
+        sprite.anchor.x = 0.0;
+        sprite.anchor.y = 0.0;
+        sprite.position.x = posX;
+        sprite.position.y = posY;
+        sprite.width = w;
+        sprite.height = h;
+        this.sprites.set(Math.random(), sprite)
+        this.pixiApp.stage.addChild( sprite);
       },
       applyCanvasSettings(){
+        this.pixiApp.stage.removeChild(this.graphics.get('grid'))
         this.setCanvasSize();
-        this.drawGrid()
+        this.toggleGrid();
+      },
+       toggleGrid () {
+        if (this.grid) {
+          this.drawGrid()
+        }else {
+          this.pixiApp.stage.removeChild(this.graphics.get('grid'))
+        }
       }
     },
 

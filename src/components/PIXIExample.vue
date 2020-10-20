@@ -14,8 +14,22 @@
               </tr>
             </thead>
             <tbody>
+            <tr>
+              <td>Titulo</td>
+              <td>
+                <v-text-field v-model="dimentions.title.posX" label="x"></v-text-field>
+                <v-text-field v-model="dimentions.title.posY" label="y"></v-text-field>
+              </td>
+              <td>
+                <v-text-field v-model="dimentions.title.w" label="w"></v-text-field>
+                <v-text-field v-model="dimentions.title.h" label="h"></v-text-field>
+              </td>
+              <td>
+                <v-btn class="primary" @click="alert('draw title')">Agregar</v-btn>
+              </td>
+            </tr>
               <tr>
-                <td>Titulo</td>
+                <td>Rectangulo</td>
                 <td>
                   <v-text-field v-model="dimentions.title.posX" label="x"></v-text-field>
                   <v-text-field v-model="dimentions.title.posY" label="y"></v-text-field>
@@ -57,7 +71,7 @@
                 <td colspan="4"><h3>Canvas settings</h3></td>
               </tr>
               <tr>
-                <td colspan="3">
+                <td colspan="2">
                   <v-text-field label="Canvas width" v-model="canvasW"></v-text-field>
                   <v-text-field label="Canvas heigth" v-model="canvasH"></v-text-field>
                 </td>
@@ -65,11 +79,15 @@
                   <v-text-field label="Step" v-model="step"></v-text-field>
                   <v-switch v-model="grid" label="Grid ON/OFF"></v-switch>
                 </td>
+                <td ><v-btn color="primary" @click="applyCanvasSettings">Apply  </v-btn></td>
               </tr>
-              <tr>
-                <td colspan="4"><v-btn color="primary" @click="applyCanvasSettings">Apply canvas settings </v-btn></td>
-              </tr>
-
+            <tr>
+              <td colspan="4"><h3>Acciones</h3></td>
+            </tr>
+            <tr>
+              <td colspan="2"><v-btn @click="alert('generar PDF')">Generar PDF</v-btn></td>
+              <td colspan="2"><v-btn @click="alert('generar JSON')">Generar Representacion JSON</v-btn></td>
+            </tr>
             </tbody>
           </v-simple-table>
         </v-col>
@@ -169,13 +187,14 @@ import image from '../assets/logo.png'
         this.setCanvasSize();
         this.toggleGrid();
       },
-       toggleGrid () {
+      toggleGrid () {
         if (this.grid) {
           this.drawGrid()
         }else {
           this.pixiApp.stage.removeChild(this.graphics.get('grid'))
         }
-      }
+      },
+
     },
 
   }

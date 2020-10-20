@@ -85,7 +85,8 @@
               <td colspan="4"><h3>Acciones</h3></td>
             </tr>
             <tr>
-              <td colspan="2"><v-btn @click="alert('generar PDF')">Generar PDF</v-btn></td>
+              <td colspan="1"><v-btn @click="alert('generar PDF')">Generar PDF</v-btn></td>
+              <td colspan="1"><v-btn @click="alert('generar PDF')">Reordenar</v-btn></td>
               <td colspan="2"><v-btn @click="alert('generar JSON')">Generar Representacion JSON</v-btn></td>
             </tr>
             </tbody>

@@ -4,6 +4,9 @@
           <v-simple-table>
             <thead>
               <tr>
+                <td colspan="4"><h3>Canvas Objects</h3></td>
+              </tr>
+              <tr>
                 <th>Objeto</th>
                 <th>Posición</th>
                 <th>Tamaño</th>
@@ -38,9 +41,20 @@
                   <v-text-field v-model="dimentions.image.h" label="h"></v-text-field>
                 </td>
               <td>
-                <v-btn class="green" @click="drawSprite({posX: dimentions.image.posX, posY: dimentions.image.posY, w: dimentions.image.w, h: dimentions.image.h})">Agregar</v-btn>
+                <v-btn class="green"
+                       @click="drawSprite({
+                       posX: dimentions.image.posX,
+                       posY: dimentions.image.posY,
+                       w: dimentions.image.w,
+                       h: dimentions.image.h,
+                       path: '../assets/logo.png'})">
+                  Agregar
+                </v-btn>
 
               </td>
+              </tr>
+              <tr>
+                <td colspan="4"><h3>Canvas settings</h3></td>
               </tr>
               <tr>
                 <td colspan="3">
@@ -51,6 +65,9 @@
                   <v-text-field label="Step" v-model="step"></v-text-field>
                   <v-switch v-model="grid" label="Grid ON/OFF"></v-switch>
                 </td>
+              </tr>
+              <tr>
+                <td colspan="4"><v-btn color="primary" @click="applyCanvasSettings">Apply canvas settings </v-btn></td>
               </tr>
 
             </tbody>
@@ -65,6 +82,7 @@
 </template>
 <script>
 import * as PIXI from "pixi.js/dist/pixi";
+import image from '../assets/logo.png'
   export default {
     name: "PIXIExample",
     data() {
@@ -87,8 +105,7 @@ import * as PIXI from "pixi.js/dist/pixi";
     },
     methods: {
       setupPixi() {
-        const Application = PIXI.Application,
-          loader = PIXI.loader;
+        const Application = PIXI.Application;
         this.canvas =  this.$refs.grid;
         this.pixiApp =  new Application({
           width: this.canvasW,
@@ -96,10 +113,14 @@ import * as PIXI from "pixi.js/dist/pixi";
           view: this.canvas,
           transparent: true,
         })
-        this.setCanvasSize(this.canvas, this.canvasW, this.canvasH);
-        this.drawGrid( this.canvasW, this.canvasH, this.step)
+        this.setCanvasSize();
+        this.drawGrid()
       },
       drawRectangle(posX ,posY, w, h) {
+        posY = Number(posY)
+        posX = Number(posX)
+        w = Number(w)
+        h = Number(h)
         const graphics = new PIXI.Graphics()
         graphics.lineStyle(2, '#22aabb')
         graphics.moveTo(posX, posY)
@@ -107,29 +128,31 @@ import * as PIXI from "pixi.js/dist/pixi";
         graphics.lineTo(posX+w, posY+h)
         graphics.lineTo(posX, posY+h)
         graphics.lineTo(posX, posY)
-        this.graphics.push(graphics)
         this.pixiApp.stage.addChild(graphics)
       },
-      setCanvasSize(canvas, w, h) {
-        canvas.width  = w;
-        canvas.height = h;
+      setCanvasSize() {
+        this.canvas.width  = Number(this.canvasW);
+        this.canvas.height = Number(this.canvasH);
       },
-      drawGrid( w, h, step) {
+      drawGrid( ) {
         const graphics = new PIXI.Graphics()
         graphics.lineStyle(1, 0x000000)
-        for (let x=0;x<=w;x+=step) {
+        for (let x=0;x<=this.canvasW;x+=Number(this.step)) {
           graphics.moveTo(x, 0);
-          graphics.lineTo(x, h);
+          graphics.lineTo(x, this.canvasH);
         }
-        for (let y=0;y<=h;y+=step) {
+        for (let y=0;y<=this.canvasH;y+=Number(this.step)) {
           graphics.moveTo(0, y);
-          graphics.lineTo(w, y);
+          graphics.lineTo(this.canvasH, y);
         }
-        this.graphics.push(graphics)
         this.pixiApp.stage.addChild(graphics)
       },
-      drawSprite({posX ,posY, w, h, url='https://lh3.googleusercontent.com/proxy/XiV7ivyfCm6dL7pDE_pS9ZOctLDcbY2c8seMqtcJ0M1NMmJ7bVKOfTcmafl9-ov2YJPofBbPlAg7M-BXGpTcMfgyuCZMpCcctnhrMN37QAL0YRk-rEk'}) {
-        const hawaii = PIXI.Sprite.from(url);
+      drawSprite({posX ,posY, w, h, path='../assets/logo.png'}) {
+        const hawaii = PIXI.Sprite.from(image);
+        posY = Number(posY)
+        posX = Number(posX)
+        w = Number(w)
+        h = Number(h)
         hawaii.anchor.x = 0.0;
         hawaii.anchor.y = 0.0;
         hawaii.position.x = posX;
@@ -137,6 +160,10 @@ import * as PIXI from "pixi.js/dist/pixi";
         hawaii.width = w;
         hawaii.height = h;
         this.pixiApp.stage.addChild(hawaii);
+      },
+      applyCanvasSettings(){
+        this.setCanvasSize();
+        this.drawGrid()
       }
     },
 

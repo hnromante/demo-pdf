@@ -1,98 +1,138 @@
 <template>
     <v-row>
-        <v-col>
-          <v-simple-table>
-            <thead>
-              <tr>
-                <td colspan="4"><h3>Canvas Objects</h3></td>
-              </tr>
-              <tr>
-                <th>Objeto</th>
-                <th>Posición</th>
-                <th>Tamaño</th>
-                <th>Agregar</th>
-              </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <td>Titulo</td>
-              <td>
-                <v-text-field v-model="dimentions.title.posX" label="x"></v-text-field>
-                <v-text-field v-model="dimentions.title.posY" label="y"></v-text-field>
-              </td>
-              <td>
-                <v-text-field v-model="dimentions.title.w" label="w"></v-text-field>
-                <v-text-field v-model="dimentions.title.h" label="h"></v-text-field>
-              </td>
-              <td>
-                <v-btn class="primary" @click="alert('draw title')">Agregar</v-btn>
-              </td>
-            </tr>
-              <tr>
-                <td>Rectangulo</td>
-                <td>
-                  <v-text-field v-model="dimentions.title.posX" label="x"></v-text-field>
-                  <v-text-field v-model="dimentions.title.posY" label="y"></v-text-field>
-                </td>
-                <td>
-                  <v-text-field v-model="dimentions.title.w" label="w"></v-text-field>
-                  <v-text-field v-model="dimentions.title.h" label="h"></v-text-field>
-                </td>
-                <td>
-                  <v-btn class="primary" @click="drawRectangle(dimentions.title.posX, dimentions.title.posY, dimentions.title.w, dimentions.title.h)">Agregar</v-btn>
-                </td>
-              </tr>
-              <tr>
-              <td>
-                Imagen
-              </td>
-                <td>
-                  <v-text-field v-model="dimentions.image.posX" label="x"></v-text-field>
-                  <v-text-field v-model="dimentions.image.posY" label="y"></v-text-field>
-                </td>
-                <td>
-                  <v-text-field v-model="dimentions.image.w" label="w"></v-text-field>
-                  <v-text-field v-model="dimentions.image.h" label="h"></v-text-field>
-                </td>
-              <td>
-                <v-btn class="green"
-                       @click="drawSprite({
+        <v-col cols="7">
+          <v-row>
+            <v-col>
+              <v-simple-table>
+                <thead>
+                <tr>
+                  <th colspan="4"><h3>Canvas Objects</h3></th>
+                </tr>
+                <tr>
+                  <th>Objeto</th>
+                  <th>Posición</th>
+                  <th>Tamaño</th>
+                  <th>Agregar</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td>Titulo</td>
+                  <td>
+                    <v-text-field v-model="dimentions.title.posX" label="x"></v-text-field>
+                    <v-text-field v-model="dimentions.title.posY" label="y"></v-text-field>
+                  </td>
+                  <td>
+                    <v-text-field v-model="dimentions.title.w" label="w"></v-text-field>
+                    <v-text-field v-model="dimentions.title.h" label="h"></v-text-field>
+                  </td>
+                  <td>
+                    <v-btn class="primary" @click="alert('draw title')">Agregar</v-btn>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Rectangulo</td>
+                  <td>
+                    <v-text-field v-model="dimentions.title.posX" label="x"></v-text-field>
+                    <v-text-field v-model="dimentions.title.posY" label="y"></v-text-field>
+                  </td>
+                  <td>
+                    <v-text-field v-model="dimentions.title.w" label="w"></v-text-field>
+                    <v-text-field v-model="dimentions.title.h" label="h"></v-text-field>
+                  </td>
+                  <td>
+                    <v-btn class="primary" @click="drawRectangle(dimentions.title.posX, dimentions.title.posY, dimentions.title.w, dimentions.title.h)">Agregar</v-btn>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Imagen
+                  </td>
+                  <td>
+                    <v-text-field v-model="dimentions.image.posX" label="x"></v-text-field>
+                    <v-text-field v-model="dimentions.image.posY" label="y"></v-text-field>
+                  </td>
+                  <td>
+                    <v-text-field v-model="dimentions.image.w" label="w"></v-text-field>
+                    <v-text-field v-model="dimentions.image.h" label="h"></v-text-field>
+                  </td>
+                  <td>
+                    <v-btn class="green"
+                           @click="drawSprite({
                        posX: dimentions.image.posX,
                        posY: dimentions.image.posY,
                        w: dimentions.image.w,
                        h: dimentions.image.h,
                        path: '../assets/logo.png'})">
-                  Agregar
-                </v-btn>
+                      Agregar
+                    </v-btn>
 
-              </td>
-              </tr>
-              <tr>
-                <td colspan="4"><h3>Canvas settings</h3></td>
-              </tr>
-              <tr>
-                <td colspan="2">
-                  <v-text-field label="Canvas width" v-model="canvasW"></v-text-field>
-                  <v-text-field label="Canvas heigth" v-model="canvasH"></v-text-field>
-                </td>
-                <td>
-                  <v-text-field label="Step" v-model="step"></v-text-field>
-                  <v-switch v-model="grid" label="Grid ON/OFF"></v-switch>
-                </td>
-                <td ><v-btn color="primary" @click="applyCanvasSettings">Apply  </v-btn></td>
-              </tr>
-            <tr>
-              <td colspan="4"><h3>Acciones</h3></td>
-            </tr>
-            <tr>
-              <td colspan="1"><v-btn @click="alert('generar PDF')">Generar PDF</v-btn></td>
-              <td colspan="1"><v-btn @click="alert('generar PDF')">Reordenar</v-btn></td>
-              <td colspan="2"><v-btn @click="alert('generar JSON')">Generar Representacion JSON</v-btn></td>
-            </tr>
-            </tbody>
-          </v-simple-table>
+                  </td>
+                </tr>
+                </tbody>
+              </v-simple-table>
+            </v-col>
+            <v-col>
+              <v-simple-table>
+                <thead>
+                <tr>
+                  <th colspan="4"><h3>Canvas settings</h3></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td colspan="2">
+                    <v-text-field label="Canvas width" v-model="canvasW"></v-text-field>
+                    <v-text-field label="Canvas heigth" v-model="canvasH"></v-text-field>
+                  </td>
+                  <td>
+                    <v-text-field label="Step" v-model="step"></v-text-field>
+                    <v-switch v-model="grid" label="Grid ON/OFF"></v-switch>
+                  </td>
+                  <td ><v-btn color="primary" @click="applyCanvasSettings">Apply  </v-btn></td>
+                </tr>
+                </tbody>
+              </v-simple-table>
+              <v-simple-table>
+                <thead>
+                  <tr>
+                    <th colspan="4"><h3>Acciones</h3></th>
+                  </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td colspan="1"><v-btn @click="alert('generar PDF')">Generar PDF</v-btn></td>
+                  <td colspan="1"><v-btn @click="alert('generar PDF')">Reordenar</v-btn></td>
+                  <td colspan="2"><v-btn @click="alert('generar JSON')">Generar JSON</v-btn></td>
+                </tr>
+                </tbody>
+              </v-simple-table>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-simple-table>
+                <thead>
+                <tr>
+                  <th colspan="3"><h4>Objetos creados</h4></th>
+                </tr>
+                <tr>
+                  <th colspan="2">id</th>
+                  <th >acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="item in arrayOfSprites" :key="item[0]">
+                  <td>{{item[0]}}</td>
+                  <td><v-btn>Borrar</v-btn></td>
+                </tr>
+                </tbody>
+              </v-simple-table>
+            </v-col>
+          </v-row>
+
         </v-col>
-        <v-col>
+        <v-col cols="5">
             <v-container class="grid-container">
                 <canvas ref="grid"></canvas>
             </v-container>
@@ -118,6 +158,7 @@ import image from '../assets/logo.png'
           title: {posX: 400, posY: 600, w: 120, h: 40},
           image: {posX: 400, posY: 400, w: 100, h: 200},
         },
+        mySetChangeTracker: 1,
       }
     },
     mounted() {
@@ -180,8 +221,10 @@ import image from '../assets/logo.png'
         sprite.position.y = posY;
         sprite.width = w;
         sprite.height = h;
-        this.sprites.set(Math.random(), sprite)
+        this.sprites.set(Math.random(), { data: {posX ,posY, w, h, image}})
+        this.mySetChangeTracker++
         this.pixiApp.stage.addChild( sprite);
+
       },
       applyCanvasSettings(){
         this.pixiApp.stage.removeChild(this.graphics.get('grid'))
@@ -196,6 +239,11 @@ import image from '../assets/logo.png'
         }
       },
 
+    },
+    computed: {
+      arrayOfSprites: function () {
+        return this.mySetChangeTracker && Array.from(this.sprites)
+      }
     },
 
   }

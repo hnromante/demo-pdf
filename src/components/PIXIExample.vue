@@ -82,8 +82,8 @@
                 <tbody>
                 <tr>
                   <td colspan="2">
-                    <v-text-field label="Canvas width" v-model="canvasW"></v-text-field>
-                    <v-text-field label="Canvas heigth" v-model="canvasH"></v-text-field>
+                    <v-text-field label="Canvas width" type="number" v-model="canvasW"></v-text-field>
+                    <v-text-field label="Canvas heigth" type="number" v-model="canvasH"></v-text-field>
                   </td>
                   <td>
                     <v-text-field label="Step" v-model="step"></v-text-field>
@@ -101,7 +101,7 @@
                 </thead>
                 <tbody>
                 <tr>
-                  <td colspan="1"><v-btn @click="alert('generar PDF')">Generar PDF</v-btn></td>
+                  <td colspan="1"><v-btn @click="generatePDF">Generar PDF</v-btn></td>
                   <td colspan="1"><v-btn @click="alert('generar PDF')">Reordenar</v-btn></td>
                   <td colspan="2"><v-btn @click="alert('generar JSON')">Generar JSON</v-btn></td>
                 </tr>
@@ -142,12 +142,13 @@
 <script>
 import * as PIXI from "pixi.js/dist/pixi";
 import image from '../assets/logo.png'
+import { jsPDF } from "jspdf";
   export default {
     name: "PIXIExample",
     data() {
       return {
         canvasW: 800,
-        canvasH: 1200,
+        canvasH: 800,
         step: 100,
         grid: true,
         canvas: null,
@@ -173,8 +174,8 @@ import image from '../assets/logo.png'
           height: this.canvasH,
           view: this.canvas,
           transparent: true,
+          resizeTo: window
         })
-        this.setCanvasSize();
         this.drawGrid()
       },
       drawRectangle(posX ,posY, w, h) {
@@ -192,19 +193,20 @@ import image from '../assets/logo.png'
         this.pixiApp.stage.addChild(graphics)
       },
       setCanvasSize() {
-        this.canvas.width  = Number(this.canvasW);
-        this.canvas.height = Number(this.canvasH);
+      console.log()
       },
       drawGrid( ) {
         const graphics = new PIXI.Graphics()
         graphics.lineStyle(1, 0x000000)
-        for (let x=0;x<=this.canvasW;x+=Number(this.step)) {
+
+
+      for (let x=0;x<=this.canvasW;x+=Number(this.step)) {
           graphics.moveTo(x, 0);
           graphics.lineTo(x, this.canvasH);
         }
         for (let y=0;y<=this.canvasH;y+=Number(this.step)) {
           graphics.moveTo(0, y);
-          graphics.lineTo(this.canvasH, y);
+          graphics.lineTo(this.canvasW, y);
         }
         this.graphics.set('grid', graphics)
         this.pixiApp.stage.addChild(graphics)
@@ -228,17 +230,28 @@ import image from '../assets/logo.png'
       },
       applyCanvasSettings(){
         this.pixiApp.stage.removeChild(this.graphics.get('grid'))
-        this.setCanvasSize();
         this.toggleGrid();
+        this.setCanvasSize();
       },
       toggleGrid () {
+        this.pixiApp.stage.removeChild(this.graphics.get('grid'))
         if (this.grid) {
           this.drawGrid()
-        }else {
-          this.pixiApp.stage.removeChild(this.graphics.get('grid'))
         }
       },
+      generatePDF () {
+        //here is the renderer
+        console.log({PIXI})
+        //const renderer = new PIXI.Renderer({width: this.canvasW, height: this.canvasH, transparent: true});
+        //I first rendered the stage **important**
+        this.pixiApp.renderer.render(this.pixiApp.stage);
+        //I grabbed the canvas element pixi uses and extracted the base64 data from it
+        const data = this.pixiApp.renderer.view.toDataURL();//what to do with this data? one option is to assign it as the src of an <image> //In this case I open another window to display itvar win=window.open();win.document.write("<img src='" + data + "'/>");//or you can grab a js plugin like Canvas2Image.js which downloads the image directly//though it still has some bugsCanvas2Image.saveAsPNG(renderer.view);
+        const pdf = new jsPDF();
 
+        pdf.addImage(data, 'JPEG', 0, 0);
+        pdf.save("download.pdf");
+      },
     },
     computed: {
       arrayOfSprites: function () {

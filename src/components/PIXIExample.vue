@@ -143,6 +143,7 @@
 import * as PIXI from "pixi.js/dist/pixi";
 import image from '../assets/logo.png'
 import { jsPDF } from "jspdf";
+import {backPack2D} from "@/utils/backpack";
   export default {
     name: "PIXIExample",
     data() {
@@ -164,6 +165,8 @@ import { jsPDF } from "jspdf";
     },
     mounted() {
       this.setupPixi();
+      const solutions = backPack2D();
+      console.log({solutions})
     },
     methods: {
       setupPixi() {

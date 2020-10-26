@@ -199,7 +199,6 @@ import { jsPDF } from "jspdf";
         const graphics = new PIXI.Graphics()
         graphics.lineStyle(1, 0x000000)
 
-
       for (let x=0;x<=this.canvasW;x+=Number(this.step)) {
           graphics.moveTo(x, 0);
           graphics.lineTo(x, this.canvasH);
@@ -226,7 +225,6 @@ import { jsPDF } from "jspdf";
         this.sprites.set(Math.random(), { data: {posX ,posY, w, h, image}})
         this.mySetChangeTracker++
         this.pixiApp.stage.addChild( sprite);
-
       },
       applyCanvasSettings(){
         this.pixiApp.stage.removeChild(this.graphics.get('grid'))
@@ -248,7 +246,6 @@ import { jsPDF } from "jspdf";
         //I grabbed the canvas element pixi uses and extracted the base64 data from it
         const data = this.pixiApp.renderer.view.toDataURL();//what to do with this data? one option is to assign it as the src of an <image> //In this case I open another window to display itvar win=window.open();win.document.write("<img src='" + data + "'/>");//or you can grab a js plugin like Canvas2Image.js which downloads the image directly//though it still has some bugsCanvas2Image.saveAsPNG(renderer.view);
         const pdf = new jsPDF();
-
         pdf.addImage(data, 'JPEG', 0, 0);
         pdf.save("download.pdf");
       },

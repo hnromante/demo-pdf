@@ -102,7 +102,7 @@
                 <tbody>
                 <tr>
                   <td colspan="1"><v-btn @click="generatePDF">Generar PDF</v-btn></td>
-                  <td colspan="1"><v-btn @click="alert('generar PDF')">Reordenar</v-btn></td>
+                  <td colspan="1"><v-btn @click="shelf">Shelf</v-btn></td>
                   <td colspan="2"><v-btn @click="alert('generar JSON')">Generar JSON</v-btn></td>
                 </tr>
                 </tbody>
@@ -122,8 +122,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="item in arrayOfSprites" :key="item[0]">
-                  <td>{{item[0]}}</td>
+                <tr v-for="item in arrayOfSprites" :key="item.id">
+                  <td>{{JSON.stringify(item.data)}}</td>
                   <td><v-btn>Borrar</v-btn></td>
                 </tr>
                 </tbody>
@@ -165,8 +165,7 @@ import {backPack2D} from "@/utils/backpack";
     },
     mounted() {
       this.setupPixi();
-      const solutions = backPack2D();
-      console.log({solutions})
+
     },
     methods: {
       setupPixi() {
@@ -193,6 +192,8 @@ import {backPack2D} from "@/utils/backpack";
         graphics.lineTo(posX+w, posY+h)
         graphics.lineTo(posX, posY+h)
         graphics.lineTo(posX, posY)
+/*        this.sprites.set(Math.random(), { data: {posX ,posY, w, h, image}, sprite: graphics})*/
+        this.mySetChangeTracker++
         this.pixiApp.stage.addChild(graphics)
       },
       setCanvasSize() {
@@ -225,7 +226,7 @@ import {backPack2D} from "@/utils/backpack";
         sprite.position.y = posY;
         sprite.width = w;
         sprite.height = h;
-        this.sprites.set(Math.random(), { data: {posX ,posY, w, h, image}})
+        this.sprites.set(Math.random(), { data: {posX ,posY, w, h, image}, sprite})
         this.mySetChangeTracker++
         this.pixiApp.stage.addChild( sprite);
       },
@@ -239,6 +240,31 @@ import {backPack2D} from "@/utils/backpack";
         if (this.grid) {
           this.drawGrid()
         }
+      },
+      changeSpritePosition(sprite, {posX, posY}){
+        sprite.position.x = posX;
+        sprite.position.y = posY;
+      },
+      shelf() {
+        const DEFAULT_ITEMS = [{w: 1, h: 1}, {w: 3, h: 4}, {w: 2, h: 3}, {w: 1, h: 3}, {w: 5, h: 5}, {w:7, h: 5}];
+        const DEFAULT_CANVAS_DIMENTIONS = {w: 8, h: 12};
+        const CANVAS_DIMENTIONS = {w: Math.floor(this.canvasW/100), h: Math.floor(this.canvasH/100)};
+        const normalizedSprites = this.normalizeObjects();
+        console.log({CANVAS_DIMENTIONS, normalizedSprites})
+        const solutions = backPack2D({
+          canvasDimentions:CANVAS_DIMENTIONS,
+          items: normalizedSprites.sort((a,b) => a.h -b.h).reverse(),
+          solutions: [],
+          heightRemaining: CANVAS_DIMENTIONS.h
+        });
+        console.log({solutions})
+        solutions.forEach(sol => {
+          this.changeSpritePosition(sol.sprite, {posX: sol.x*100, posY: sol.y*100})
+        })
+
+      },
+      normalizeObjects(){
+        return this.arrayOfSprites.map(item => ({w: Math.floor(item.data.w/100), h: Math.floor(item.data.h/100), sprite: item.sprite}))
       },
       generatePDF () {
         //here is the renderer
@@ -255,7 +281,7 @@ import {backPack2D} from "@/utils/backpack";
     },
     computed: {
       arrayOfSprites: function () {
-        return this.mySetChangeTracker && Array.from(this.sprites)
+        return this.mySetChangeTracker && (Array.from(this.sprites).map(tuple => ({id: tuple[0], ...tuple[1]})))
       }
     },
 

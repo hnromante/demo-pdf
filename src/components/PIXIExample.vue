@@ -159,13 +159,13 @@ import * as PIXI from "pixi.js/dist/pixi";
 import image from '../assets/logo.png'
 import { jsPDF } from "jspdf";
 import _ from 'lodash';
-import {backPack2D} from "@/utils/backpack";
+import {backpackShelf} from "@/utils/backpack";
   export default {
     name: "PIXIExample",
     data() {
       return {
         canvasW: 800,
-        canvasH: 1250,
+        canvasH: 1125,
         step: 100,
         grid: true,
         canvas: null,
@@ -325,7 +325,7 @@ import {backPack2D} from "@/utils/backpack";
         this.deleteAllOulines();
         const CANVAS_DIMENTIONS = {w: Math.floor(this.canvasW), h: Math.floor(this.canvasH)};
         const normalizedSprites = this.normalizeObjects();
-        const solutions = backPack2D({
+        const solutions = backpackShelf({
           canvasDimentions:CANVAS_DIMENTIONS,
           items: normalizedSprites.sort((a,b) => a.h -b.h).reverse(),
           solutions: [],

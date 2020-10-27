@@ -165,7 +165,7 @@ import {backPack2D} from "@/utils/backpack";
     data() {
       return {
         canvasW: 800,
-        canvasH: 800,
+        canvasH: 1250,
         step: 100,
         grid: true,
         canvas: null,

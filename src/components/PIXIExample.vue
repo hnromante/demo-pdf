@@ -33,15 +33,20 @@
                 <tr>
                   <td>Rectangulo</td>
                   <td>
-                    <v-text-field v-model="dimentions.title.posX" label="x"></v-text-field>
-                    <v-text-field v-model="dimentions.title.posY" label="y"></v-text-field>
+                    <v-text-field v-model="dimentions.rectangle.posX" label="x"></v-text-field>
+                    <v-text-field v-model="dimentions.rectangle.posY" label="y"></v-text-field>
                   </td>
                   <td>
-                    <v-text-field v-model="dimentions.title.w" label="w"></v-text-field>
-                    <v-text-field v-model="dimentions.title.h" label="h"></v-text-field>
+                    <v-text-field v-model="dimentions.rectangle.w" label="w"></v-text-field>
+                    <v-text-field v-model="dimentions.rectangle.h" label="h"></v-text-field>
                   </td>
                   <td>
-                    <v-btn class="primary" @click="drawRectangle(dimentions.title.posX, dimentions.title.posY, dimentions.title.w, dimentions.title.h)">Agregar</v-btn>
+                    <v-btn class="primary" @click="drawRectangle({
+                      posX: dimentions.rectangle.posX,
+                      posY: dimentions.rectangle.posY,
+                      w: dimentions.rectangle.w,
+                      h: dimentions.rectangle.h
+                    })">Agregar</v-btn>
                   </td>
                 </tr>
                 <tr>
@@ -122,7 +127,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="item in arrayOfSprites" :key="item.id">
+                <tr v-for="item in sprites" :key="item.id">
                   <td>{{JSON.stringify(item.data)}}</td>
                   <td><v-btn>Borrar</v-btn></td>
                 </tr>
@@ -154,13 +159,13 @@ import {backPack2D} from "@/utils/backpack";
         grid: true,
         canvas: null,
         pixiApp: null,
-        graphics: new Map(),
-        sprites: new Map(),
+        graphics: [],
+        sprites: [],
         dimentions: {
           title: {posX: 400, posY: 600, w: 120, h: 40},
+          rectangle: {posX: 400, posY: 600, w: 120, h: 40},
           image: {posX: 400, posY: 400, w: 100, h: 200},
         },
-        mySetChangeTracker: 1,
       }
     },
     mounted() {
@@ -180,21 +185,34 @@ import {backPack2D} from "@/utils/backpack";
         })
         this.drawGrid()
       },
-      drawRectangle(posX ,posY, w, h) {
+      drawOutline(sprite, {color, posX ,posY, w, h}) {
+        const graphics = new PIXI.Graphics()
+        graphics.beginFill(color);
+        graphics.lineStyle(1, 0);
+        graphics.drawRect(posX, posY, w, h);
+        graphics.endFill()
+        this.pixiApp.stage.addChild( graphics);
+        this.graphics.push({ data: {posX ,posY, w, h}, graphics, type: 'outline', id: Math.random()})
+      },
+      deleteAllOulines (){
+        this.graphics.filter(item => item.type == 'outline').forEach(item => this.pixiApp.stage.removeChild(item.graphics))
+      },
+      drawRectangle({posX ,posY, w, h, color=0xFF0000}) {
+        const sprite = PIXI.Sprite.from(PIXI.Texture.WHITE);
         posY = Number(posY)
         posX = Number(posX)
         w = Number(w)
         h = Number(h)
-        const graphics = new PIXI.Graphics()
-        graphics.lineStyle(2, '#22aabb')
-        graphics.moveTo(posX, posY)
-        graphics.lineTo(posX+w, posY)
-        graphics.lineTo(posX+w, posY+h)
-        graphics.lineTo(posX, posY+h)
-        graphics.lineTo(posX, posY)
-/*        this.sprites.set(Math.random(), { data: {posX ,posY, w, h, image}, sprite: graphics})*/
-        this.mySetChangeTracker++
-        this.pixiApp.stage.addChild(graphics)
+        sprite.anchor.x = 0.0;
+        sprite.anchor.y = 0.0;
+        sprite.position.x = posX;
+        sprite.position.y = posY;
+        sprite.width = w;
+        sprite.height = h;
+        sprite.tint = color;
+        this.drawOutline(sprite, {posX ,posY, w, h, color})
+        this.sprites.push({ id: Math.random(), data: {posX ,posY, w, h, image, color}, sprite, type: 'rectangle'})
+        this.pixiApp.stage.addChild( sprite);
       },
       setCanvasSize() {
       console.log()
@@ -211,7 +229,7 @@ import {backPack2D} from "@/utils/backpack";
           graphics.moveTo(0, y);
           graphics.lineTo(this.canvasW, y);
         }
-        this.graphics.set('grid', graphics)
+        this.graphics.push({id: Math.random(), type: 'grid', graphics})
         this.pixiApp.stage.addChild(graphics)
       },
       drawSprite({posX ,posY, w, h, path='../assets/logo.png'}) {
@@ -226,45 +244,49 @@ import {backPack2D} from "@/utils/backpack";
         sprite.position.y = posY;
         sprite.width = w;
         sprite.height = h;
-        this.sprites.set(Math.random(), { data: {posX ,posY, w, h, image}, sprite})
-        this.mySetChangeTracker++
+        this.sprites.push({id: Math.random(), data: {posX ,posY, w, h, image},type: 'image', sprite})
         this.pixiApp.stage.addChild( sprite);
       },
       applyCanvasSettings(){
-        this.pixiApp.stage.removeChild(this.graphics.get('grid'))
+        this.removeGrid()
         this.toggleGrid();
         this.setCanvasSize();
       },
       toggleGrid () {
-        this.pixiApp.stage.removeChild(this.graphics.get('grid'))
+        this.removeGrid();
         if (this.grid) {
           this.drawGrid()
         }
+      },
+      removeGrid() {
+        this.pixiApp.stage.removeChild(this.graphics.find(item => item.type == 'grid'))
       },
       changeSpritePosition(sprite, {posX, posY}){
         sprite.position.x = posX;
         sprite.position.y = posY;
       },
       shelf() {
-        const DEFAULT_ITEMS = [{w: 1, h: 1}, {w: 3, h: 4}, {w: 2, h: 3}, {w: 1, h: 3}, {w: 5, h: 5}, {w:7, h: 5}];
-        const DEFAULT_CANVAS_DIMENTIONS = {w: 8, h: 12};
-        const CANVAS_DIMENTIONS = {w: Math.floor(this.canvasW/100), h: Math.floor(this.canvasH/100)};
+        this.deleteAllOulines();
+        const CANVAS_DIMENTIONS = {w: Math.floor(this.canvasW), h: Math.floor(this.canvasH)};
         const normalizedSprites = this.normalizeObjects();
-        console.log({CANVAS_DIMENTIONS, normalizedSprites})
         const solutions = backPack2D({
           canvasDimentions:CANVAS_DIMENTIONS,
           items: normalizedSprites.sort((a,b) => a.h -b.h).reverse(),
           solutions: [],
           heightRemaining: CANVAS_DIMENTIONS.h
         });
-        console.log({solutions})
         solutions.forEach(sol => {
-          this.changeSpritePosition(sol.sprite, {posX: sol.x*100, posY: sol.y*100})
+          this.changeSpritePosition(sol.sprite, {posX: sol.x, posY: sol.y})
+          const params = {posX: sol.x, posY: sol.y, h: sol.h, w: sol.w, color: sol.color}
+          console.log({params, sol})
+          if (sol.type === 'rectangle'){
+            this.drawOutline(sol.sprite, params)
+          }
         })
 
       },
       normalizeObjects(){
-        return this.arrayOfSprites.map(item => ({w: Math.floor(item.data.w/100), h: Math.floor(item.data.h/100), sprite: item.sprite}))
+        return this.sprites.map(item => ({w: Math.floor(item.data.w), h: Math.floor(item.data.h), sprite: item.sprite, color: item.data.color, ...item}))
       },
       generatePDF () {
         //here is the renderer
@@ -279,12 +301,6 @@ import {backPack2D} from "@/utils/backpack";
         pdf.save("download.pdf");
       },
     },
-    computed: {
-      arrayOfSprites: function () {
-        return this.mySetChangeTracker && (Array.from(this.sprites).map(tuple => ({id: tuple[0], ...tuple[1]})))
-      }
-    },
-
   }
 </script>
 

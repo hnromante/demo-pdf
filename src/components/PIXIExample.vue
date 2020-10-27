@@ -108,7 +108,7 @@
                 <tr>
                   <td colspan="1"><v-btn @click="generatePDF">Generar PDF</v-btn></td>
                   <td colspan="1"><v-btn @click="shelf">Shelf</v-btn></td>
-                  <td colspan="2"><v-btn @click="alert('generar JSON')">Generar JSON</v-btn></td>
+                  <td colspan="2"><v-btn @click="generateJSON">Generar JSON</v-btn></td>
                 </tr>
                 </tbody>
               </v-simple-table>
@@ -133,6 +133,9 @@
                 </tr>
                 </tbody>
               </v-simple-table>
+            </v-col>
+            <v-col>
+              <p>{{generatedJSON}}</p>
             </v-col>
           </v-row>
 
@@ -166,6 +169,7 @@ import {backPack2D} from "@/utils/backpack";
           rectangle: {posX: 400, posY: 600, w: 120, h: 40},
           image: {posX: 400, posY: 400, w: 100, h: 200},
         },
+        generatedJSON: ''
       }
     },
     mounted() {
@@ -300,7 +304,13 @@ import {backPack2D} from "@/utils/backpack";
         pdf.addImage(data, 'JPEG', 0, 0);
         pdf.save("download.pdf");
       },
-    },
+      generateJSON(){
+        this.generatedJSON = JSON.stringify({
+          graphics: this.graphics.map(item => ({...item, graphics: undefined})),
+          sprites: this.sprites.map(item => ({...item, sprite: undefined}))
+        })
+      }
+    }
   }
 </script>
 

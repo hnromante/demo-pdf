@@ -113,7 +113,7 @@
                   <td colspan="1"><v-btn @click="clearCanvas">Clear</v-btn></td>
                 </tr>
                 <tr>
-                  <td colspan="1"><v-text-field v-model="batch.titles"></v-text-field><v-btn @click="addBatch('titles', batch.title)">Add {{batch.titles}} titles</v-btn></td>
+                  <td colspan="1"><v-text-field v-model="batch.titles"></v-text-field><v-btn @click="addBatch('titles', batch.titles)">Add {{batch.titles}} titles</v-btn></td>
                   <td colspan="1"><v-text-field v-model="batch.images"></v-text-field><v-btn @click="addBatch('images', batch.images)">Add {{batch.images}} images</v-btn></td>
                   <td colspan="1"><v-text-field v-model="batch.rectangles"></v-text-field><v-btn @click="addBatch('rectangles', batch.rectangles)">Add {{batch.rectangles}} rectangles</v-btn></td>
                 </tr>
@@ -210,19 +210,21 @@ import {backPack2D} from "@/utils/backpack";
         this.graphics = this.graphics.filter(item => item.type == 'grid')
       },
       addBatch(type, amount) {
-        new _.range(amount).forEach(() => {
+        console.log({type, amount})
+        new _.range(amount).forEach((i, index) => {
           const randomParams = {
-            posX: _.random(0, this.canvasW),
-            posY: _.random(0, this.canvasH),
-            w: _.random(0, this.canvasW),
-            h: _.random(0, this.canvasH),
+            posX: _.random(1, this.canvasW/2),
+            posY: _.random(1, this.canvasH/2),
+            w: _.random(1, this.canvasW/2),
+            h: _.random(1, this.canvasH/2),
           }
           switch (type){
             case 'images':
               this.drawSprite(randomParams)
               break;
             case 'titles':
-              this.drawRectangle(randomParams)
+              console.log("CASE TITLE", {randomParams})
+              this.addTitle({...randomParams, title: `Title ${index}`})
               break;
             case 'rectangles':
               this.drawRectangle(randomParams)
@@ -265,6 +267,7 @@ import {backPack2D} from "@/utils/backpack";
         text.position.y = posY;
         text.width = w;
         text.height = h;
+        this.sprites.push({id: Math.random(), data: {posX ,posY, w, h, image},type: 'title', sprite: text})
         this.pixiApp.stage.addChild(text)
       },
       setCanvasSize() {
@@ -312,7 +315,7 @@ import {backPack2D} from "@/utils/backpack";
         }
       },
       removeGrid() {
-        this.pixiApp.stage.removeChild(this.graphics.find(item => item.type == 'grid'))
+        this.pixiApp.stage.removeChild(this.graphics.find(item => item.type == 'grid').graphics)
       },
       changeSpritePosition(sprite, {posX, posY}){
         sprite.position.x = posX;
@@ -328,31 +331,25 @@ import {backPack2D} from "@/utils/backpack";
           solutions: [],
           heightRemaining: CANVAS_DIMENTIONS.h
         });
-        solutions.forEach(sol => {
-          this.changeSpritePosition(sol.sprite, {posX: sol.x, posY: sol.y})
-          const params = {posX: sol.x, posY: sol.y, h: sol.h, w: sol.w, color: sol.color}
-          if (sol.type === 'rectangle'){
-            this.drawOutline(sol.sprite, params)
-          }
 
-        })
-        normalizedSprites.forEach(i => !!solutions.find(item=> {
-          const existsInSOlution = item.id === i.id
-          if (!existsInSOlution) {
-            this.pixiApp.stage.removeChild(i.sprite)
+        for (let i=0; i< normalizedSprites.length; i++){
+          const solution = solutions.find(item => item.id === normalizedSprites[i].id)
+          console.log({hasSolution: solution})
+          if (solution) {
+            this.changeSpritePosition(solution.sprite, {posX: solution.x, posY: solution.y})
+            if (solution.type === 'rectangle'){
+              this.drawOutline(solution.sprite, {posX: solution.x, posY: solution.y, h: solution.h, w: solution.w, color: solution.color})
+            }
+          }else {
+            this.pixiApp.stage.removeChild(normalizedSprites[i].sprite)
           }
-        }))
+        }
       },
       normalizeObjects(){
         return this.sprites.map(item => ({w: Math.floor(item.data.w), h: Math.floor(item.data.h), sprite: item.sprite, color: item.data.color, ...item}))
       },
       generatePDF () {
-        //here is the renderer
-        console.log({PIXI})
-        //const renderer = new PIXI.Renderer({width: this.canvasW, height: this.canvasH, transparent: true});
-        //I first rendered the stage **important**
         this.pixiApp.renderer.render(this.pixiApp.stage);
-        //I grabbed the canvas element pixi uses and extracted the base64 data from it
         const data = this.pixiApp.renderer.view.toDataURL();//what to do with this data? one option is to assign it as the src of an <image> //In this case I open another window to display itvar win=window.open();win.document.write("<img src='" + data + "'/>");//or you can grab a js plugin like Canvas2Image.js which downloads the image directly//though it still has some bugsCanvas2Image.saveAsPNG(renderer.view);
         const pdf = new jsPDF();
         pdf.addImage(data, 'JPEG', 0, 0);

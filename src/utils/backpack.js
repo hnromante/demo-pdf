@@ -54,12 +54,12 @@ export function backPack2D({canvasDimentions, items, solutions, heightRemaining}
                 if (items[i].h<=heightRemaining){
                     unassignedItems.push(items[i])
                 }else {
-                    console.warn(`Could not fit ${JSON.stringify(items[i])} into canvas with ${heightRemaining} height remaining`)
+                    console.warn(`Could not fit ${JSON.stringify({... items[i], graphics: undefined, sprite: undefined})} into canvas with ${heightRemaining} height remaining`)
                 }
             }
         }
     }
-    if (unassignedItems.length > 0 && heightRemaining){
+    if (unassignedItems.length > 0 && (heightRemaining> 0)){
         backPack2D({canvasDimentions, items: unassignedItems, solutions, heightRemaining})
     }
     return solutions

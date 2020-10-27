@@ -177,9 +177,9 @@ import {backPack2D} from "@/utils/backpack";
           image: {posX: 400, posY: 400, w: 100, h: 200},
         },
         batch: {
-          titles: 0,
-          images: 0,
-          rectangles: 0
+          titles: 1,
+          images: 1,
+          rectangles: 1
         },
         generatedJSON: ''
       }
@@ -321,12 +321,19 @@ import {backPack2D} from "@/utils/backpack";
         solutions.forEach(sol => {
           this.changeSpritePosition(sol.sprite, {posX: sol.x, posY: sol.y})
           const params = {posX: sol.x, posY: sol.y, h: sol.h, w: sol.w, color: sol.color}
-          console.log({params, sol})
           if (sol.type === 'rectangle'){
             this.drawOutline(sol.sprite, params)
           }
-        })
 
+        })
+        const spritesWithSolutions = this.sprites.filter(i => !!solutions.find(item=> {
+          const existsInSOlution = item.id === i.id
+          if (!existsInSOlution) {
+            this.pixiApp.stage.removeChild(i.sprite)
+          }
+          return existsInSOlution
+        }))
+        console.log({sprites: this.sprites, spritesWithSolutions})
       },
       normalizeObjects(){
         return this.sprites.map(item => ({w: Math.floor(item.data.w), h: Math.floor(item.data.h), sprite: item.sprite, color: item.data.color, ...item}))

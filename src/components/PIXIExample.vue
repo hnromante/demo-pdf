@@ -326,14 +326,12 @@ import {backPack2D} from "@/utils/backpack";
           }
 
         })
-        const spritesWithSolutions = this.sprites.filter(i => !!solutions.find(item=> {
+        normalizedSprites.forEach(i => !!solutions.find(item=> {
           const existsInSOlution = item.id === i.id
           if (!existsInSOlution) {
             this.pixiApp.stage.removeChild(i.sprite)
           }
-          return existsInSOlution
         }))
-        console.log({sprites: this.sprites, spritesWithSolutions})
       },
       normalizeObjects(){
         return this.sprites.map(item => ({w: Math.floor(item.data.w), h: Math.floor(item.data.h), sprite: item.sprite, color: item.data.color, ...item}))

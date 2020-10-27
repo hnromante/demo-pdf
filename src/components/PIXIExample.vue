@@ -27,7 +27,8 @@
                     <v-text-field v-model="dimentions.title.h" label="h"></v-text-field>
                   </td>
                   <td>
-                    <v-btn class="primary" @click="alert('draw title')">Agregar</v-btn>
+                    <v-text-field label="Titulo" v-model="title"></v-text-field>
+                    <v-btn class="primary" @click="addTitle({posX: dimentions.title.posX, posY: dimentions.title.posY, w: dimentions.title.w, h: dimentions.title.h, title})">Agregar</v-btn>
                   </td>
                 </tr>
                 <tr>
@@ -171,6 +172,7 @@ import {backPack2D} from "@/utils/backpack";
         pixiApp: null,
         graphics: [],
         sprites: [],
+        title: 'Title',
         dimentions: {
           title: {posX: 400, posY: 600, w: 120, h: 40},
           rectangle: {posX: 400, posY: 600, w: 120, h: 40},
@@ -256,6 +258,14 @@ import {backPack2D} from "@/utils/backpack";
         this.drawOutline(sprite, {posX ,posY, w, h, color})
         this.sprites.push({ id: Math.random(), data: {posX ,posY, w, h, image, color}, sprite, type: 'rectangle'})
         this.pixiApp.stage.addChild( sprite);
+      },
+      addTitle({posX,posY,w,h, title}) {
+        const text = new PIXI.Text(title,{fontFamily : 'Arial', fontSize: 24, fill : 0xff1010, align : 'center'});
+        text.position.x = posX;
+        text.position.y = posY;
+        text.width = w;
+        text.height = h;
+        this.pixiApp.stage.addChild(text)
       },
       setCanvasSize() {
       console.log()

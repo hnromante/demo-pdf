@@ -13,6 +13,7 @@
     "@mdi/font": "^3.6.95",
     "core-js": "^3.6.5",
     "jspdf": "^2.1.1",
+    "lodash": "^4.17.20",
     "pixi.js": "5.0.0-rc",
     "roboto-fontface": "*",
     "vue": "^2.6.11",

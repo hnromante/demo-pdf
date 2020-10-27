@@ -108,7 +108,13 @@
                 <tr>
                   <td colspan="1"><v-btn @click="generatePDF">Generar PDF</v-btn></td>
                   <td colspan="1"><v-btn @click="shelf">Shelf</v-btn></td>
-                  <td colspan="2"><v-btn @click="generateJSON">Generar JSON</v-btn></td>
+                  <td colspan="1"><v-btn @click="generateJSON">Generar JSON</v-btn></td>
+                  <td colspan="1"><v-btn @click="clearCanvas">Clear</v-btn></td>
+                </tr>
+                <tr>
+                  <td colspan="1"><v-text-field v-model="batch.titles"></v-text-field><v-btn @click="addBatch('titles', batch.title)">Add {{batch.titles}} titles</v-btn></td>
+                  <td colspan="1"><v-text-field v-model="batch.images"></v-text-field><v-btn @click="addBatch('images', batch.images)">Add {{batch.images}} images</v-btn></td>
+                  <td colspan="1"><v-text-field v-model="batch.rectangles"></v-text-field><v-btn @click="addBatch('rectangles', batch.rectangles)">Add {{batch.rectangles}} rectangles</v-btn></td>
                 </tr>
                 </tbody>
               </v-simple-table>
@@ -151,6 +157,7 @@
 import * as PIXI from "pixi.js/dist/pixi";
 import image from '../assets/logo.png'
 import { jsPDF } from "jspdf";
+import _ from 'lodash';
 import {backPack2D} from "@/utils/backpack";
   export default {
     name: "PIXIExample",
@@ -168,6 +175,11 @@ import {backPack2D} from "@/utils/backpack";
           title: {posX: 400, posY: 600, w: 120, h: 40},
           rectangle: {posX: 400, posY: 600, w: 120, h: 40},
           image: {posX: 400, posY: 400, w: 100, h: 200},
+        },
+        batch: {
+          titles: 0,
+          images: 0,
+          rectangles: 0
         },
         generatedJSON: ''
       }
@@ -188,6 +200,33 @@ import {backPack2D} from "@/utils/backpack";
           resizeTo: window
         })
         this.drawGrid()
+      },
+      clearCanvas() {
+        this.deleteAllOulines();
+        this.sprites.forEach(item => this.pixiApp.stage.removeChild(item.sprite))
+        this.sprites = []
+        this.graphics = this.graphics.filter(item => item.type == 'grid')
+      },
+      addBatch(type, amount) {
+        new _.range(amount).forEach(() => {
+          const randomParams = {
+            posX: _.random(0, this.canvasW),
+            posY: _.random(0, this.canvasH),
+            w: _.random(0, this.canvasW),
+            h: _.random(0, this.canvasH),
+          }
+          switch (type){
+            case 'images':
+              this.drawSprite(randomParams)
+              break;
+            case 'titles':
+              this.drawRectangle(randomParams)
+              break;
+            case 'rectangles':
+              this.drawRectangle(randomParams)
+              break;
+          }
+        })
       },
       drawOutline(sprite, {color, posX ,posY, w, h}) {
         const graphics = new PIXI.Graphics()
